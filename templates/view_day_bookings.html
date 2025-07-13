@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block head_extra %}
+  <!-- FullCalendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <!-- FullCalendar JS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <!-- Google Maps -->
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
+  <style>
+    /* Override FullCalendar's default today background color */
+    .fc .fc-day-today {
+      background-color: transparent !important;
+    }
+    
+    /* Make event bubbles more readable */
+    .fc-event {
+      min-height: 10em;
+      white-space: normal !important; /* Allows text wrapping */
+      overflow: visible;
+    }
+    
+    .fc-event-title {
+      white-space: normal !important; /* Allows text wrapping */
+      overflow: visible;
+      padding: 1px 2px;
+    }
+    
+    .fc-event-main {
+      padding: 2px 4px;
+    }
+    
+    /* Increase the calendar's minimum height */
+    #calendar {
+      min-height: 500px !important;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<h2>View Bookings by Date</h2>
+
+<!-- Date selection form -->
+<form method="GET">
+    <label>Select Date</label>
+    <input type="date" name="date" class="form-control" required>
+    <button type="submit" class="btn btn-primary mt-2">Search</button>
+</form>
+
+<!-- Calendar Container with a minimum height -->
+<div id="calendar" class="mt-4" style="min-height: 600px;"></div>
+
+<!-- (Optional) Display filtered bookings in table format -->
+{% if bookings %}
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Truck</th>
+                <th>Men</th>
+                <th>Client</th>
+                <th>Phone</th>
+                <th>Pickup</th>
+                <th>Drop-off</th>
+                <th>Start Time</th>
+                <th>Details</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{ booking.id }}</td>
+                <td>{{ booking.truck if booking.truck else '-' }}</td>
+                <td>{{ booking.men if booking.men else '-' }}</td>
+                <td>{{ booking.client_name }}</td>
+                <td>{{ booking.phone }}</td>
+                <td>{{ booking.pickup_address }}</td>
+                <td>{{ booking.dropoff_address }}</td>
+                <td>{{ booking.start_time }}</td>
+                <td>{{ booking.details if booking.details else '-' }}</td>
+                <td>
+                    <a href="{{ url_for('view_job', id=booking.id) }}" class="btn btn-info btn-sm">View</a>
+                    <a href="{{ url_for('edit_booking', id=booking.id, date=selected_date) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <form action="{{ url_for('delete_booking', id=booking.id) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">Delete</button>
+                    </form>
+                    
+                                        
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p class="mt-4 text-muted">No bookings found for the selected date.</p>
+{% endif %}
+
+<!-- FullCalendar Initialization Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("Initializing FullCalendar...");
+  var calendarEl = document.getElementById('calendar');
+  if (!calendarEl) {
+    console.error("Calendar container not found!");
+    return;
+  }
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'timeGridDay',
+    initialDate: "{{ selected_date if selected_date else 'today' }}",
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
+    events: '/api/bookings'
+  });
+  calendar.render();
+});
+</script>
+{% endblock %}

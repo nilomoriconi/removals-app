@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Action Buttons -->
+<div class="d-flex gap-2 mb-4">
+    <a href="{{ url_for('view_bookings') }}" class="btn btn-primary">All Bookings</a>
+    <a href="{{ url_for('view_day_bookings') }}" class="btn btn-warning">Day Bookings</a>
+    <a href="{{ url_for('add_booking') }}" class="btn btn-success">Add New Booking</a>
+</div>
+
+<!-- Today's Summary Card -->
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white">
+        <h2 class="mb-0">Today</h2>
+        <small>{{ today_date.strftime('%A, %B %d, %Y') }}</small>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Bookings <span class="badge bg-primary">{{ today_bookings|length }}</span></h4>
+            </div>
+            <div class="col-md-6">
+                <h4>Trucks Assigned</h4>
+                {% if trucks_assigned %}
+                    {% for truck in trucks_assigned %}
+                        <span class="badge bg-secondary">{{ truck }}</span>
+                    {% endfor %}
+                {% else %}
+                    <span class="text-muted">No trucks assigned today</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Today's Bookings Table -->
+{% if today_bookings %}
+<div class="card mb-5">
+    <div class="card-header bg-dark text-white">
+        <h3 class="mb-0">Today's Clients</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Truck</th>
+                        <th>Men</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in today_bookings %}
+                    <tr>
+                        <td>{{ booking.client_name }}</td>
+                        <td>{{ booking.phone }}</td>
+                        <td>{{ booking.truck if booking.truck else 'Not assigned' }}</td>
+                        <td>{{ booking.men if booking.men else 'Not specified' }}</td>
+                        <td>
+                            <a href="{{ url_for('view_job', id=booking.id) }}" class="btn btn-info btn-sm">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info mb-5">
+    No bookings scheduled for today
+</div>
+{% endif %}
+
+<!-- Tomorrow's Summary Card -->
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white">
+        <h2 class="mb-0">Tomorrow</h2>
+        <small>{{ tomorrow_date.strftime('%A, %B %d, %Y') }}</small>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Bookings <span class="badge bg-primary">{{ tomorrow_bookings|length }}</span></h4>
+            </div>
+            <div class="col-md-6">
+                <h4>Trucks Assigned</h4>
+                {% if tomorrow_trucks_assigned %}
+                    {% for truck in tomorrow_trucks_assigned %}
+                        <span class="badge bg-secondary">{{ truck }}</span>
+                    {% endfor %}
+                {% else %}
+                    <span class="text-muted">No trucks assigned tomorrow</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tomorrow's Bookings Table -->
+{% if tomorrow_bookings %}
+<div class="card">
+    <div class="card-header bg-dark text-white">
+        <h3 class="mb-0">Tomorrow's Clients</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Truck</th>
+                        <th>Men</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in tomorrow_bookings %}
+                    <tr>
+                        <td>{{ booking.client_name }}</td>
+                        <td>{{ booking.phone }}</td>
+                        <td>{{ booking.truck if booking.truck else 'Not assigned' }}</td>
+                        <td>{{ booking.men if booking.men else 'Not specified' }}</td>
+                        <td>
+                            <a href="{{ url_for('view_job', id=booking.id) }}" class="btn btn-info btn-sm">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">
+    No bookings scheduled for tomorrow
+</div>
+{% endif %}
+
+{% endblock %}

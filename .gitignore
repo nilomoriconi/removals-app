@@ -1,0 +1,11 @@
+#archivos a ignorar
+.env
+.env.production
+logs/
+*.log
+removalist.db
+bookings.db
+*.sqlite3
+__pycache__/
+venv/
+flask-venv/

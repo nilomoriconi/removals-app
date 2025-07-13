@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+
+{% block head_extra %}
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
+{% endblock %}
+
+{% block content %}
+    <form method="POST" action="{{ url_for('add_booking') }}" id="bookingForm">
+        <div class="container mt-4">
+            <h2>Add New Booking</h2>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Date</label>
+                <div class="col-sm-4">
+                    <input type="date" class="form-control" name="date" id="booking_date" required>
+                    <small class="text-muted" id="booking_count"></small>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Client Name</label>   
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="client_name" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Pickup Address</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="pickup_address" id="pickup_address" placeholder="Palm Beach">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Pickup Access/Stairs</label>
+                <div class="col-sm-4">
+                    <input type="text" name="pickup_access_stairs" class="form-control">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Dropoff Address</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="dropoff_address" id="dropoff_address" placeholder="5 Dutton St, Coolangatta">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Dropoff Access/Stairs</label>
+                <div class="col-sm-4">
+                    <input type="text" name="dropoff_access_stairs" class="form-control">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Calculate Route</label>
+                <div class="col-sm-4">
+                  <!-- Button (outside the card) -->
+                  <button type="button" class="btn btn-primary mb-2" id="calculateRoute">Calculate ETA</button>
+              
+                  <!-- Card for ETA results only -->
+                  <div class="card">
+                    <div class="card-body">
+                      <span id="loading" style="display:none;">Loading...</span>
+                      <div id="etaResults" class="mt-2"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Phone</label>
+                <div class="col-sm-4">
+                    <input type="tel" class="form-control" name="phone">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Start Time</label>   
+                <div class="col-sm-4">
+                    <input type="time" class="form-control" name="start_time" id="start_time" value="07:00">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Hourly Rate ($ per hour):</label>
+                <div class="col-sm-4">
+                    <input type="number" class="form-control" name="hourly_rate" step="0.01">
+                </div>
+            </div>
+
+            <div class="row mb-3">   
+                <label class="col-sm-2 col-form-label">Truck</label>
+                <div class="col-sm-4">
+                    <select class="form-control" name="truck" id="truck">
+                        <option value=""></option>
+                        <option value="Optimus">Optimus</option>
+                        <option value="Hino">Hino</option>
+                        <option value="Baby Hino">Baby Hino</option>
+                        <option value="Isuzu">Isuzu</option>
+                        <option value="Fuso">Fuso</option>
+                        <option value="Van">Van</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+             
+            <div class="row mb-3" id="truck_other" style="display:none;">
+                <label class="col-sm-2 col-form-label">Other Truck</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="truck_other">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Men</label>
+                <div class="col-sm-4 d-flex gap-2">
+                    <input type="text" class="form-control" name="men">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Job Details</label>
+                <div class="col-sm-4">
+                    <textarea class="form-control" name="details"></textarea>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Estimated Time</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="estimated_time" id="estimated_time" placeholder="4 to 6">
+                    <small class="text-muted">
+                        Estimated Cost: <span id="estimated_cost">$0.00</span><br>
+                        Including GST: <span id="estimated_cost_gst">$0.00</span>
+                    </small>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Booking Source</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="booking_source">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Parking Info</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="parking_info">
+                </div>
+            </div>
+
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">List of Items:</label>
+                <div class="col-sm-4">
+                    <textarea class="form-control" name="list_of_items"></textarea>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label class="col-sm-2 col-form-label">Email</label>
+                <div class="col-sm-4">
+                    <input type="email" class="form-control" name="email">
+                </div>
+            </div>
+
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success">Add Booking</button>
+                <a href="{{ url_for('view_bookings') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        function toggleOtherTruck() {
+            var truckSelect = document.getElementById("truck");
+            var truckOtherInput = document.getElementById("truck_other");
+            if (truckSelect.value === "Other") {
+                truckOtherInput.style.display = "block";
+            } else {
+                truckOtherInput.style.display = "none";
+            }
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            toggleOtherTruck();
+            document.getElementById("truck").addEventListener("change", toggleOtherTruck);
+
+            // Set default start time to 7 AM
+            document.getElementById("start_time").value = "07:00";
+
+
+            // Calculate route ETA
+            document.getElementById("calculateRoute").addEventListener("click", function() {
+                var pickup = document.getElementById("pickup_address").value;
+                var dropoff = document.getElementById("dropoff_address").value;
+
+                if (pickup && dropoff) {
+                    $('#loading').show();
+                    $('#etaResults').html('');
+
+                    $.ajax({
+                        url: '/calculate_route',
+                        method: 'POST',
+                        data: { pickup_address: pickup, dropoff_address: dropoff },
+                        success: function(response) {
+                            $('#loading').hide();
+                            if (response.status === 'success') {
+                                var results = `From Palm Beach to Pickup: <b>${response.to_pickup}</b><br>` +
+                                              `Pickup to Drop-off: <b>${response.pickup_to_dropoff}</b><br>` +
+                                              `Drop-off to Palm Beach: <b>${response.dropoff_to_base}</b>`;
+                                $('#etaResults').html(results);
+                            } else {
+                                $('#etaResults').html(`Error: ${response.error}`);
+                            }
+                        },
+                        error: function() {
+                            $('#loading').hide();
+                            $('#etaResults').html('Error calculating route.');
+                        }
+                    });
+                } else {
+                    alert('Please enter both pickup and drop-off addresses.');
+                }
+            });
+
+            // Add calculation for estimated cost
+            function calculateEstimatedCost() {
+                const hourlyRate = parseFloat(document.querySelector('input[name="hourly_rate"]').value) || 0;
+                const estimatedTime = document.getElementById('estimated_time').value;
+                const GST_RATE = 1.1; // 10% GST
+                
+                // Extract numbers from the input (e.g., "4 to 6" becomes [4, 6])
+                const numbers = estimatedTime.match(/\d+/g);
+                
+                if (!numbers || hourlyRate === 0) {
+                    document.getElementById('estimated_cost').textContent = '$0.00';
+                    document.getElementById('estimated_cost_gst').textContent = '$0.00';
+                    return;
+                }
+
+                if (numbers.length === 1) {
+                    // Single number estimate
+                    const cost = (hourlyRate * parseFloat(numbers[0])).toFixed(2);
+                    const costWithGst = (hourlyRate * parseFloat(numbers[0]) * GST_RATE).toFixed(2);
+                    document.getElementById('estimated_cost').textContent = `$${cost}`;
+                    document.getElementById('estimated_cost_gst').textContent = `$${costWithGst}`;
+                } else if (numbers.length >= 2) {
+                    // Range estimate
+                    const minCost = (hourlyRate * parseFloat(numbers[0])).toFixed(2);
+                    const maxCost = (hourlyRate * parseFloat(numbers[1])).toFixed(2);
+                    const minCostWithGst = (hourlyRate * parseFloat(numbers[0]) * GST_RATE).toFixed(2);
+                    const maxCostWithGst = (hourlyRate * parseFloat(numbers[1]) * GST_RATE).toFixed(2);
+                    document.getElementById('estimated_cost').textContent = `$${minCost} - $${maxCost}`;
+                    document.getElementById('estimated_cost_gst').textContent = `$${minCostWithGst} - $${maxCostWithGst}`;
+                }
+            }
+
+            // Add event listeners for both inputs
+            document.querySelector('input[name="hourly_rate"]').addEventListener('input', calculateEstimatedCost);
+            document.getElementById('estimated_time').addEventListener('input', calculateEstimatedCost);
+
+            // Add date change listener
+            document.getElementById("booking_date").addEventListener("change", function() {
+                const selectedDate = this.value;
+                
+                // Make AJAX call to get booking count
+                fetch(`/get_booking_count/${selectedDate}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const count = data.count;
+                        const message = count === 1 ? 
+                            "There is 1 booking on this date" : 
+                            `There are ${count} bookings on this date`;
+                        document.getElementById("booking_count").textContent = message;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById("booking_count").textContent = "Error loading booking count";
+                    });
+            });
+        });
+    </script>
+{% endblock %}

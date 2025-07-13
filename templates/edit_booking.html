@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Edit Booking
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2>Edit Booking</h2>
+
+        <form action="{{ url_for('edit_booking', id=booking.id, date=request.args.get('date')) }}" method="POST">
+          
+
+            <div class="mb-3">
+                <label class="form-label">Date</label>
+                <input type="date" name="date" value="{{ booking.date.strftime('%Y-%m-%d') if booking.date else '' }}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Truck</label>
+                <select name="truck" id="truckSelect" class="form-control">
+                    <option value="" {% if not booking.truck %}selected{% endif %}></option>
+                    <option value="Optimus" {% if booking.truck == "Optimus" %}selected{% endif %}>Optimus</option>
+                    <option value="Hino" {% if booking.truck == "Hino" %}selected{% endif %}>Hino</option>
+                    <option value="Baby Hino" {% if booking.truck == "Baby Hino" %}selected{% endif %}>Baby Hino</option>
+                    <option value="Isuzu" {% if booking.truck == "Isuzu" %}selected{% endif %}>Isuzu</option>
+                    <option value="Fuso" {% if booking.truck == "Fuso" %}selected{% endif %}>Fuso</option>
+                    <option value="Van" {% if booking.truck == "Van" %}selected{% endif %}>Van</option>
+                    <option value="Other" {% if booking.truck and booking.truck not in ['Optimus', 'Hino', 'Baby Hino', 'Isuzu', 'Fuso', 'Van'] %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+
+            <div class="mb-3" id="truckOtherInput" style="display: none;">
+                <label class="form-label">Custom Truck</label>
+                <input type="text" name="truck_other" class="form-control" placeholder="Enter custom truck"
+                       value="{{ booking.truck if booking.truck and booking.truck not in ['Optimus', 'Hino', 'Baby Hino', 'Isuzu', 'Fuso', 'Van'] else '' }}">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Men</label>
+                <input type="text" name="men" value="{{ booking.men if booking.men else '' }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Start Time</label>
+                <input type="time" name="start_time" value="{{ booking.start_time if booking.start_time else '' }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Client Name</label>
+                <input type="text" name="client_name" value="{{ booking.client_name }}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Phone</label>
+                <input type="tel" name="phone" value="{{ booking.phone if booking.phone else '' }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Pickup Address</label>
+                <input type="text" name="pickup_address" value="{{ booking.pickup_address if booking.pickup_address else '' }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Pick-Up Access/Stairs</label>
+                <input type="text" name="pickup_access_stairs" class="form-control" value="{{ booking.pickup_access_stairs or '' }}">
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Drop-Off Access/Stairs</label>
+                <input type="text" name="dropoff_access_stairs" class="form-control" value="{{ booking.dropoff_access_stairs or '' }}">
+            </div>
+
+
+            <div class="mb-3">
+                <label class="form-label">Dropoff Address</label>
+                <input type="text" name="dropoff_address" value="{{ booking.dropoff_address if booking.dropoff_address else '' }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Details</label>
+                <textarea name="details" class="form-control">{{ booking.details if booking.details else '' }}</textarea>
+            </div>
+
+            <hr>
+
+            <div class="mb-3">
+                <label class="form-label">Estimated Time</label>
+                <input type="text" name="estimated_time" value="{{ booking.estimated_time if booking.estimated_time else '' }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Hourly Rate</label>
+                <input type="number" name="hourly_rate" step="0.01" value="{{ booking.hourly_rate if booking.hourly_rate is not none else '' }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Booking Source</label>
+                <input type="text" name="booking_source" value="{{ booking.booking_source if booking.booking_source else '' }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Parking Info</label>
+                <input type="text" name="parking_info" value="{{ booking.parking_info if booking.parking_info else '' }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Access/Stairs</label>
+                <input type="text" name="access_stairs" value="{{ booking.access_stairs if booking.access_stairs else '' }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">List of Items</label>
+                <textarea name="list_of_items" class="form-control">{{ booking.list_of_items if booking.list_of_items else '' }}</textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" value="{{ booking.email if booking.email else '' }}" class="form-control">
+            </div>
+
+            <hr>
+            <h4>To Be Completed After Job</h4>
+
+            <div class="mb-3">
+                <label class="form-label">Total Time</label>
+                <input type="text" name="total_time" value="{{ booking.total_time if booking.total_time else '' }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Amount Charged</label>
+                <input type="number" name="amount_charged" step="0.01" value="{{ booking.amount_charged if booking.amount_charged is not none else '' }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Payment Method</label>
+                <input type="text" name="payment_method" value="{{ booking.payment_method if booking.payment_method else '' }}" class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Client Happy?</label>
+                <select name="client_happy" class="form-control">
+                    <option value="" {% if not booking.client_happy %}selected{% endif %}></option>
+                    <option value="yes" {% if booking.client_happy == "yes" %}selected{% endif %}>Yes</option>
+                    <option value="mid" {% if booking.client_happy == "mid" %}selected{% endif %}>Mid</option>
+                    <option value="no" {% if booking.client_happy == "no" %}selected{% endif %}>No</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Asked for Review?</label>
+                <select name="asked_for_review" class="form-control">
+                    <option value="" {% if not booking.asked_for_review %}selected{% endif %}></option>
+                    <option value="yes" {% if booking.asked_for_review == "yes" %}selected{% endif %}>Yes</option>
+                    <option value="no" {% if booking.asked_for_review == "no" %}selected{% endif %}>No</option>
+                </select>
+            </div>
+
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{{ url_for('view_day_bookings', date=request.args.get('date')) }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var truckSelect = document.getElementById("truckSelect");
+            var truckOtherInput = document.getElementById("truckOtherInput");
+
+            function toggleTruckOther() {
+                if (truckSelect.value === "Other") {
+                    truckOtherInput.style.display = "block";
+                } else {
+                    truckOtherInput.style.display = "none";
+                    truckOtherInput.querySelector("input").value = "";
+                }
+            }
+
+            truckSelect.addEventListener("change", toggleTruckOther);
+            toggleTruckOther();
+        });
+    </script>
+{% endblock %}
