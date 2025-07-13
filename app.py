@@ -30,7 +30,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 # Initialize Google Maps Client
-gmaps = googlemaps.Client(key=app.config['GOOGLE_MAPS_API_API_KEY_SERVER'])
+gmaps = googlemaps.Client(key=app.config['GOOGLE_MAPS_API_KEY_SERVER'])
 
 # Configure logging
 if not os.path.exists('logs'):
