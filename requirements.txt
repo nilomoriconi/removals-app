@@ -1,2 +1,19 @@
-gunicorn==23.0.0
-packaging==24.2
+# web-framework & templating
+Flask>=3.1,<4
+
+# ORM + migrations
+SQLAlchemy>=2.0,<3
+Flask-SQLAlchemy>=3.1,<4
+Flask-Migrate>=4.1,<5        # pulls in Alembic automatically
+
+# Google Maps client
+googlemaps>=4.10,<5
+
+# env-file loader
+python-dotenv>=1.0,<2
+
+# production WSGI server
+gunicorn>=23,<24
+
+# internal helper used by your code (import packaging.version)
+packaging>=24,<25

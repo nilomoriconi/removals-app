@@ -9,3 +9,4 @@ __pycache__/
 venv/
 flask-venv/
 *.DS_Store
+.DS_Store
