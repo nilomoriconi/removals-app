@@ -26,7 +26,7 @@ else:
     app.config.from_object(DevelopmentConfig)
 
 # Initialize Database and Migration
-db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app, db)
 
 # Initialize Google Maps Client
@@ -376,21 +376,6 @@ def internal_error(error):
     db.session.rollback()
     return render_template('errors/500.html'), 500
 
-def create_app(config_class=DevelopmentConfig):
-    app = Flask(__name__)
-    app.config.from_object(config_class)
-    
-    # Initialize extensions
-    db.init_app(app)
-    migrate.init_app(app, db)
-    
-    # Initialize Google Maps
-    gmaps = googlemaps.Client(key=app.config['GOOGLE_MAPS_API_KEY_SERVER'])
-    
-    return app
 
-# Use in development
-app = create_app()
-
-if __name__ == '__main__':
-    app.run()
+if __name__ == "__main__":
+    app.run(debug=True)

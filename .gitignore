@@ -1,6 +1,5 @@
 #archivos a ignorar
-.env
-.env.production
+.env*
 logs/
 *.log
 removalist.db
@@ -9,3 +8,4 @@ bookings.db
 __pycache__/
 venv/
 flask-venv/
+*.DS_Store
