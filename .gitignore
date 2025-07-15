@@ -1,14 +1,28 @@
 #archivos a ignorar
 .env*
 logs/
-*.log
-removalist.db
 bookings.db
 *.sqlite3
-__pycache__/
-venv/
 flask-venv/
 *.DS_Store
 .DS_Store
+
+# Entornos y cachés
 .venv/
+__pycache__/
+
+# Bases SQLite
 instance/*.db
+removalist.db
+
+# Config locales
+.env
+.env.production
+
+# Archivos temporales / swap
+*.swp
+*.tmp
+*.log
+
+# Subidas de usuario (si llega el caso)
+static/uploads/**
