@@ -19,7 +19,7 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     # En desarrollo puedes permitir un fallback a SQLite:
-    if SQLALCHEMY_DATABASE_URI is None:
+    if Config.SQLALCHEMY_DATABASE_URI is None:
         SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(basedir, 'removalist.db')}"
 
 class ProductionConfig(Config):
