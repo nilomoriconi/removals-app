@@ -1,22 +1,39 @@
-name: deploy
+name: deploy         # nombre que verás en Actions
 
 on:
   push:
-    branches: [main]
+    branches: [main]   # se dispara sólo cuando haces git push a main
 
 jobs:
   prod:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Pull & restart via SSH
+      - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          host:      ${{ secrets.SSH_HOST }}     # 74.208.79.231
+          username:  ${{ secrets.SSH_USER }}     # deploy
+          key:       ${{ secrets.SSH_KEY }}      # clave privada CI→VPS
+          port: 22
+
+          # ---------- todo lo importante está aquí ----------
           script: |
+            set -e                                    # aborta si algo falla
+
             cd ~/removals-app
-            git pull origin main
+
+            # 1) sincroniza el repo **idéntico** a GitHub
+            git fetch origin
+            git reset --hard origin/main              # descarta cambios locales
+            git clean -fd -e "instance/*.db"          # borra basura pero respeta la DB
+
+            # 2) recrea virtual-env limpia
+            python3 -m venv .venv
             source .venv/bin/activate
+            pip install --upgrade pip
             pip install -r requirements.txt
+            deactivate
+
+            # 3) reinicia la app
             sudo systemctl restart removals
