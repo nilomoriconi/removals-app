@@ -17,3 +17,6 @@ gunicorn>=23,<24
 
 # internal helper used by your code (import packaging.version)
 packaging>=24,<25
+
+
+psycopg2-binary
