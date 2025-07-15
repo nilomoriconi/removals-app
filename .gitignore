@@ -10,4 +10,5 @@ venv/
 flask-venv/
 *.DS_Store
 .DS_Store
-
+.venv/
+instance/*.db
