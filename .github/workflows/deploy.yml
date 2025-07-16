@@ -33,6 +33,9 @@ jobs:
             source .venv/bin/activate
             pip install --upgrade pip
             pip install -r requirements.txt
+     	    # ──▶▶  AUTOMATIC MIGRATION  ◀◀────────────
+            export $(grep -v '^#' .env | xargs)        # carga DATABASE_URL
+            flask db upgrade                           # aplica todos los scripts
             deactivate
 
             # 3) reinicia la app

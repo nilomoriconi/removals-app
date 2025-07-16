@@ -20,3 +20,4 @@ packaging>=24,<25
 
 
 psycopg2-binary
+tqdm
